@@ -57,6 +57,7 @@ in
       update = "sudo nixos-rebuild switch";
 
       v = "$EDITOR";
+      love = "nixGL love";
 
       gs = "git status";
       ga = "git add";
@@ -83,6 +84,7 @@ in
     ];
 
     envExtra = ''
+    export XDG_DATA_DIRS=$HOME/.nix-profile/share:$XDG_DATA_DIRS
     export PATH="$PATH:~/.nix-profile/bin/"
 
     source ~/.nix-profile/etc/profile.d/nix.sh
