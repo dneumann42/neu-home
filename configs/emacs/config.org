@@ -1,0 +1,626 @@
+#+TITLE: Dustin's NEW emacs config
+
+* Basic configuration
+
+#+begin_src emacs-lisp
+  (setq debug-on-error t)
+  (setq org-confirm-babel-evaluate nil)
+#+end_src
+
+#+RESULTS:
+
+** Package sources
+
+#+begin_src emacs-lisp
+(require 'package)
+
+(add-to-list 'package-archives
+ '("melpa" . "https://melpa.org/packages/") t)
+
+(package-initialize)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
+(setq
+ inhibit-startup-message t
+ visible-bell t)
+
+;; Highlight urls for clicking
+(goto-address-mode 1)
+#+end_src
+
+#+RESULTS:
+: t
+
+** Line numbers
+
+#+begin_src emacs-lisp
+(global-display-line-numbers-mode 1)
+(column-number-mode)
+#+end_src
+
+#+RESULTS:
+: t
+
+** Fringe mode
+
+Disabling fringes
+
+#+begin_src emacs-lisp
+(fringe-mode -1)
+#+end_src
+
+#+RESULTS:
+: ((vertical-scroll-bars) (left-fringe . -1) (right-fringe . -1))
+
+* Gui interface tweaks
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :init
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (menu-bar-mode -1)
+  (load-theme 'some-nice-colors t)
+  ;; (load-theme 'wheatgrass t)
+  )
+#+end_src
+
+#+RESULTS:
+
+Dimming the parentheses Reference: DimParentheses
+
+#+begin_src emacs-lisp
+; (defface paren-face
+;   '((((class color) (background dark))
+;      (:foreground "grey25"))
+;     (((class color) (background light))
+;      (:foreground "grey80")))
+;   "Face used to dim parentheses.")
+; 
+; (defface paren-face-brighter
+;   '((((class color) (background dark))
+;      (:foreground "grey40"))
+;     (((class color) (background light))
+;      (:foreground "grey80")))
+;   "Face used to dim parentheses.")
+; 
+; (add-hook 'emacs-lisp-mode-hook 
+;     (lambda ()
+; 	(font-lock-add-keywords nil 
+; 	'(("(\\|)" . 'paren-face)))))
+; 
+; (add-hook 'nim-mode-hook 
+;     (lambda ()
+; 	(font-lock-add-keywords nil 
+; 	'(("(\\|)" . 'paren-face-brighter)))))
+#+end_src
+
+#+RESULTS:
+
+** Jumping
+
+#+begin_src emacs-lisp
+(use-package dumb-jump
+  :ensure t
+  :hook (xref-backend-functions . dumb-jump-xref-activate))
+#+end_src
+
+#+RESULTS:
+| dumb-jump-xref-activate |
+
+** Eldoc
+
+#+begin_src emacs-lisp
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+(add-hook 'ielm-mode-hook 'eldoc-mode)
+#+end_src
+
+#+RESULTS:
+| eldoc-mode |
+
+** Modeline
+
+#+begin_src emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :init
+  (setq
+    doom-modeline-mjaor-mode-icon t
+    doom-modeline-time t)
+  :config
+  (doom-modeline-mode 1))
+
+(setq pixel-scroll-precision-large-scroll-height 40.0)
+#+end_src
+
+#+RESULTS:
+: 40.0
+
+** Window balancing
+
+#+begin_src emacs-lisp
+(use-package zoom
+  :ensure
+  :config
+  (zoom-mode))
+#+end_src
+
+#+RESULTS:
+: t
+
+* Emacs behavior
+
+** Disabling backup files
+
+#+begin_src emacs-lisp
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+(setq create-lockfiles nil)
+#+end_src
+
+#+RESULTS:
+
+** Save place
+
+When you visit a file, point goes to the last place where it was when you previously visited the same file.
+
+#+begin_src emacs-lisp
+(save-place-mode 1)
+#+end_src
+
+#+RESULTS:
+: t
+
+** Parens and auto parens
+
+#+begin_src emacs-lisp
+(electric-pair-mode 1)
+(setq electric-pair-pairs
+      '((?\" . ?\") (?\{ . ?\})))
+#+end_src
+
+#+RESULTS:
+: ((34 . 34) (123 . 125))
+
+** Ido mode
+
+#+begin_src emacs-lisp
+(use-package ido
+  :ensure t
+  :init
+  (setq
+    ido-enable-flex-matching t
+    ido-everywhere t
+    ido-use-filename-at-point 'guess
+    ido-create-new-buffer 'always ;; creates new buffer even if misspelled
+    ido-file-extensions-order '(".org" ".txt" ".py" ".el" ".emacs" ".nim"))
+  :config
+  (ido-mode 1)
+  (ido-everywhere 1))
+
+(use-package ido-vertical-mode
+  :ensure t
+  :init
+  (setq ido-use-faces t
+	ido-vertical-define-keys 'C-n-and-C-p-only)
+  :config
+  (ido-vertical-mode 1)
+  (set-face-attribute 'ido-vertical-first-match-face nil
+		      :height 120
+		      :underline t)
+  :after (ido))
+
+(use-package smex
+  :ensure t
+  :config
+  (smex-initialize)
+  :bind (("M-x" . smex)
+         ("M-X" . smex-major-mode-commands)
+         ("C-c C-c M-x" . execute-extended-command))
+  :after (ido))
+#+end_src
+
+#+RESULTS:
+: execute-extended-command
+
+** Shell pop
+
+#+begin_src emacs-lisp
+(use-package shell-pop
+  :ensure t
+  :custom
+  (shell-pop-universal-key "C-c SPC")
+  (shell-pop-term-shell "zsh")
+  (shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+
+  (shell-pop-window-size 20)
+  (shell-pop-full-span nil)
+  (shell-pop-window-position "bottom")
+  (shell-pop-autocd-to-working-dir t)
+  (shell-pop-restore-window-configuration t) 
+  (shell-pop-cleanup-buffer-at-process-exit t)
+  )
+#+end_src
+
+#+RESULTS:
+
+** Multi cursors
+
+#+begin_src emacs-lisp
+(use-package multiple-cursors
+  :ensure t		
+  :bind			
+  (:map global-map
+    ("C-S-c C-S-c" . mc/edit-lines)
+    ("C->" . mc/mark-next-like-this)
+    ("C-<" . mc/mark-previous-like-this)
+    ("C-c C-<" . mc/mark-all-like-this)))
+#+end_src
+
+#+RESULTS:
+: mc/mark-all-like-this
+
+** Misc
+
+#+begin_src emacs-lisp
+(delete-selection-mode t)
+;; revert buffers automatically when underlying files are changed externally
+(global-auto-revert-mode t)
+;; smart tab behavior - indent or complete
+(setq tab-always-indent 'complete)
+;; diminish keeps the modeline tidy
+
+;; meaningful names for buffers with the same name
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
+(setq uniquify-separator "/")
+(setq uniquify-after-kill-buffer-p t)    ; rename after killing uniquified
+(setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+
+(load (expand-file-name ".emacs.d/volatile-highlights.el"))
+(require 'volatile-highlights)
+(volatile-highlights-mode t)
+
+(set-default 'imenu-auto-rescan t)
+#+end_src
+
+#+RESULTS:
+: t
+
+** Expand region
+
+#+begin_src emacs-lisp
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
+#+end_src
+
+#+RESULTS:
+: er/expand-region
+
+** Auto completion
+
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :after lsp-mode
+  :hook (prog-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode))
+
+(use-package yasnippet
+  :ensure t)
+#+end_src
+
+#+RESULTS:
+
+** Which key
+
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Global search
+#+begin_src emacs-lisp
+(use-package ag
+  :ensure t
+  :config
+  (global-set-key (kbd "M-s") 'ag-project))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Wrapping search
+
+https://stackoverflow.com/questions/285660/automatically-wrapping-i-search
+
+#+begin_src emacs-lisp
+;; Prevents issue where you have to press backspace twice when
+;; trying to remove the first character that fails a search
+(define-key isearch-mode-map [remap isearch-delete-char] 'isearch-del-char)
+
+(defadvice isearch-search (after isearch-no-fail activate)
+  (unless isearch-success
+    (ad-disable-advice 'isearch-search 'after 'isearch-no-fail)
+    (ad-activate 'isearch-search)
+    (isearch-repeat (if isearch-forward 'forward))
+    (ad-enable-advice 'isearch-search 'after 'isearch-no-fail)
+    (ad-activate 'isearch-search)))
+#+end_src
+
+#+RESULTS:
+: isearch-search
+
+** Treemacs
+
+#+begin_src emacs-lisp
+;; hack
+
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+
+  :config
+  (set-face-background 'treemacs-window-background-face "#070506")
+
+  :bind ("C-x p" . projectile-find-file)
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-,"       . treemacs)
+        ("C-x t d"   . treemacs-select-directory)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+;; Reloads the theme when starting treemacs to
+;; fix icon backgrounds
+
+(add-hook
+  'treemacs-mode-hook
+   (lambda () (load-theme 'some-nice-colors t)))
+
+(use-package treemacs-evil
+  :after (treemacs evil)
+  :ensure t)
+
+(use-package treemacs-projectile
+  :after (treemacs projectile)
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :hook (dired-mode . treemacs-icons-dired-enable-once)
+  :ensure t)
+
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
+
+(use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
+  :after (treemacs persp-mode) ;;or perspective vs. persp-mode
+  :ensure t
+  :config (treemacs-set-scope-type 'Perspectives))
+
+(use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
+  :after (treemacs)
+  :ensure t
+  :config (treemacs-set-scope-type 'Tabs))
+#+end_src
+
+#+RESULTS:
+
+** Project management
+
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :bind
+  (:map global-map
+        ("C-c p" . projectile-command-map))
+  :config
+  (projectile-mode 1))
+#+end_src
+
+#+RESULTS:
+: projectile-command-map
+
+* Keybindings
+
+** Undo and redo
+
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-Z") 'undo-redo)
+#+end_src
+
+#+RESULTS:
+: undo-redo
+
+** Block movement
+
+Reference: http://xahlee.info/emacs/emacs/emacs_move_by_paragraph.html
+
+#+begin_src emacs-lisp
+(defun forward-block (&optional n)
+  (interactive)
+  (let ((n (if (null n) 1 n)))
+    (re-search-forward "\n[\t\n ]*\n+" nil "NOERROR" n)))
+
+(defun backward-block (&optional n)
+  (interactive)
+  (let ((n (if (null n) 1 n))
+	($1 1))
+    (while (<= $1 1)
+      (if (re-search-backward "\n[\t\n ]*\n+" nil "NOERROR")
+	  (progn (skip-chars-backward "\n\t "))
+	(progn (goto-char (point-min))
+	       (setq $1 n)))
+      (setq $1 (1+ $1)))))
+
+
+(global-set-key (kbd "M-n") 'forward-block)
+(global-set-key (kbd "M-p") 'backward-block)
+#+end_src
+
+#+RESULTS:
+: backward-block
+
+* Completion and searching
+
+#+begin_src emacs-lisp
+(setq completion-category-overrides
+      '((buffer
+	 (styles initials flex)
+	 (cycle . 3))))
+
+(setq read-buffer-completion-ignore-case t)
+(setq read-file-name-completion-ignore-case t)
+#+end_src
+
+#+RESULTS:
+: t
+
+* Org mode
+
+#+begin_src emacs-lisp
+(setq
+ org-src-preserve-indentation nil
+ 
+ org-edit-src-content-indentation 0
+ org-src-fontify-natively t)
+
+;; Remap org mode keys
+(with-eval-after-load "org"
+  (define-key org-mode-map (kbd "C-,") #'treemacs))
+
+(setq org-hide-emphasis-markers t)
+#+end_src
+
+#+RESULTS:
+: t
+
+* Markdown
+
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown"))
+#+end_src
+
+#+RESULTS:
+: ((README\.md\' . gfm-mode) (\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.fnl\' . fennel-mode) (\.lua\' . lua-mode) (\.\(?:md\|markdown\|mkd\|mdown\|mkdn\|mdwn\)\' . markdown-mode) (\.nim\(ble\|s\)\' . nimscript-mode-maybe) (\.nim\' . nim-mode) (/git-rebase-todo\' . git-rebase-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Brew\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.py[iw]?\' . python-mode) (\.m\' . octave-maybe-mode) (\.less\' . less-css-mode) (\.scss\' . scss-mode) (\.cs\' . csharp-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.webp\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.dir-locals\(?:-2\)?\.el\' . lisp-data-mode) (\.eld\' . lisp-data-mode) (eww-bookmarks\' . lisp-data-mode) (tramp\' . lisp-data-mode) (/archive-contents\' . lisp-data-mode) (places\' . lisp-data-mode) (\.emacs-places\' . lisp-data-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|sls\|sld\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-gmake-mode) (\.make\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-gmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (/PKGBUILD\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\(acinclude\|aclocal\|acsite\)\.m4\' . autoconf-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|squashfs\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\|SQUASHFS\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.js[mx]?\' . javascript-mode) (\.har\' . javascript-mode) (\.json\' . js-json-mode) (\.[ds]?va?h?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) (\.erts\' . erts-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|EPUB\|CBZ\|FB2\|O?XPS\|DVI\|OD[FGPST]\|DOCX\|XLSX?\|PPTX?\|pdf\|epub\|cbz\|fb2\|o?xps\|djvu\|dvi\|od[fgpst]\|docx\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (/\.\(authinfo\|netrc\)\' . authinfo-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (/\.redshift\.conf\' . conf-windows-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.mailmap\' . conf-unix-mode) (/\.\(?:asound\|enigma\|fetchmail\|gltron\|gtk\|hxplayer\|mairix\|mbsync\|msmtp\|net\|neverball\|nvidia-settings-\|offlineimap\|qt/.+\|realplayer\|reportbug\|rtorrent\.\|screen\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|mpdconf\|notmuch-config\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.art\' . image-mode) (\.avs\' . image-mode) (\.bmp\' . image-mode) (\.cmyk\' . image-mode) (\.cmyka\' . image-mode) (\.crw\' . image-mode) (\.dcr\' . image-mode) (\.dcx\' . image-mode) (\.dng\' . image-mode) (\.dpx\' . image-mode) (\.fax\' . image-mode) (\.heic\' . image-mode) (\.hrz\' . image-mode) (\.icb\' . image-mode) (\.icc\' . image-mode) (\.icm\' . image-mode) (\.ico\' . image-mode) (\.icon\' . image-mode) (\.jbg\' . image-mode) (\.jbig\' . image-mode) (\.jng\' . image-mode) (\.jnx\' . image-mode) (\.miff\' . image-mode) (\.mng\' . image-mode) (\.mvg\' . image-mode) (\.otb\' . image-mode) (\.p7\' . image-mode) (\.pcx\' . image-mode) (\.pdb\' . image-mode) (\.pfa\' . image-mode) (\.pfb\' . image-mode) (\.picon\' . image-mode) (\.pict\' . image-mode) (\.rgb\' . image-mode) (\.rgba\' . image-mode) (\.tga\' . image-mode) (\.wbmp\' . image-mode) (\.webp\' . image-mode) (\.wmf\' . image-mode) (\.wpg\' . image-mode) (\.xcf\' . image-mode) (\.xmp\' . image-mode) (\.xwd\' . image-mode) (\.yuv\' . image-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode))
+
+* Langauges
+
+** LSP
+
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook ((lua-mode c-mode nim-mode) . lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-l")
+  :config
+  (lsp-enable-which-key-integration t)
+  (setq lsp-auto-guess-root t)
+  (setq lsp-log-io nil)
+  (setq lsp-restart 'auto-restart)
+  (setq lsp-enable-symbol-highlighting nil)
+  (setq lsp-enable-on-type-formatting nil)
+  (setq lsp-enable-folding nil)
+  (setq lsp-enable-snippet nil)
+  )
+
+(use-package lsp-ui
+  :ensure t
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq lsp-ui-doc-position 'bottom)
+  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-doc-header t)
+  (setq lsp-ui-doc-include-signature t)
+  (setq lsp-ui-doc-border (face-foreground 'default))
+  (setq lsp-ui-sideline-show-code-actions t)
+  (setq lsp-ui-sideline-delay 0.05)
+  :commands lsp-ui-mode)
+
+(use-package lsp-treemacs
+  :ensure t
+  :after lsp)
+
+(use-package flycheck
+  :ensure t
+  :hook (after-init-hook #'global-flycheck-mode))
+#+end_src
+
+#+RESULTS:
+| flycheck-mode |
+
+** Nix
+
+#+begin_src emacs-lisp
+(use-package nix-mode
+  :ensure t
+  :mode "\\.nix\\'")
+#+end_src
+
+** Lisp
+
+#+begin_src emacs-lisp
+(use-package lispy
+  :ensure t)
+
+(use-package eros
+  :ensure t
+  :config
+  (eros-mode 1))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Lua
+
+#+begin_src emacs-lisp
+(use-package lua-mode
+  :ensure t
+  :hook (lua-mode . lsp-deferred)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+  (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
+#+end_src
+
+#+RESULTS:
+| lsp-deferred |
+
+* Ideas
+
+create a cheatsheet that shows all useful keybindings, nicely categorized,
+and also useful functions and commands

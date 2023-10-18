@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+SHORTFMT=${SHORTFMT:-"+%l:%M:%S %p"}
+echo "$LABEL$(date "$SHORTFMT")  "
