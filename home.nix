@@ -4,6 +4,7 @@ let
     (builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/nixos-unstable)
     # reuse the current configuration
     { config = config.nixpkgs.config; }; 
+  nurpkgs = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") { inherit pkgs; };
 in
 {
   home.username = "dneumann";
@@ -33,6 +34,14 @@ in
     i3status
     i3lock
     i3blocks
+    firefox
+
+    # Gnome
+    gnome.gnome-tweaks
+
+    gnomeExtensions.appindicator
+    gnomeExtensions.burn-my-windows
+
     kitty
     ripgrep
     yad # calendar and other popups
@@ -86,9 +95,23 @@ in
     envExtra = ''
     export XDG_DATA_DIRS=$HOME/.nix-profile/share:$XDG_DATA_DIRS
     export PATH="$PATH:~/.nix-profile/bin/"
-
     source ~/.nix-profile/etc/profile.d/nix.sh
     '';
+  };
+
+  programs.firefox = {
+    enable = true;
+
+    profiles.default = {
+      id = 0;
+      name = "Default";
+      isDefault = true;
+      extensions = with nurpkgs.repos.rycee.firefox-addons; [
+        ublock-origin
+        vimium
+        darkreader
+      ];
+    };
   };
 
   home.file.".config/i3" = {
