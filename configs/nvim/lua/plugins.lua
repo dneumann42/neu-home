@@ -49,6 +49,7 @@ function M.setup()
     "neovim/nvim-lspconfig",
     "hrsh7th/cmp-nvim-lsp",
     { "folke/trouble.nvim", dependencies = { "nvim-tree/nvim-web-devicons" }, opts = {}, },
+    { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' },
 
     -- completion
     "hrsh7th/nvim-cmp",
