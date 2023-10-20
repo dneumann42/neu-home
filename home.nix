@@ -35,6 +35,7 @@ in
     i3lock
     i3blocks
     firefox
+    discord
 
     # Gnome
     gnome.gnome-tweaks
@@ -48,6 +49,9 @@ in
     love
     spotify
     newsboat
+
+    # Programming Languages
+    unstable.racket
   ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
@@ -67,6 +71,7 @@ in
 
       v = "$EDITOR";
       love = "nixGL love";
+      kitty = "nixGL kitty";
 
       gs = "git status";
       ga = "git add";
@@ -94,8 +99,13 @@ in
 
     envExtra = ''
     export XDG_DATA_DIRS=$HOME/.nix-profile/share:$XDG_DATA_DIRS
-    export PATH="$PATH:~/.nix-profile/bin/"
     source ~/.nix-profile/etc/profile.d/nix.sh
+    export PATH="$PATH:~/.nix-profile/bin/"
+    '';
+
+    initExtra = ''
+    export PATH=$PATH:~/.config/scripts/
+    export PATH=$PATH:~/.local/share/pnpm/ 
     '';
   };
 
@@ -141,6 +151,11 @@ in
 
   home.file.".config/fontconfig" = {
     source = ./configs/fontconfig;
+    recursive = true;
+  };
+
+  home.file.".config/scripts" = {
+    source = ./scripts;
     recursive = true;
   };
 

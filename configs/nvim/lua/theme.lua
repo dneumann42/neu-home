@@ -41,7 +41,6 @@ function M.setup()
       "StatusLine",
 
       "DiagnosticsSignInfo",
-
     },
     exclude_groups = {}, -- table: groups you don't want to clear
   }

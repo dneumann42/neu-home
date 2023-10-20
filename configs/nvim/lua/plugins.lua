@@ -30,6 +30,10 @@ function M.setup()
     },
     { 'nvim-lualine/lualine.nvim',
       dependencies = { "nvim-tree/nvim-web-devicons" } },
+    "stevearc/dressing.nvim",
+
+    -- UI utility
+    'MunifTanjim/nui.nvim',
 
     -- utility
     "chentoast/marks.nvim",
@@ -49,7 +53,6 @@ function M.setup()
     "neovim/nvim-lspconfig",
     "hrsh7th/cmp-nvim-lsp",
     { "folke/trouble.nvim", dependencies = { "nvim-tree/nvim-web-devicons" }, opts = {}, },
-    { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' },
 
     -- completion
     "hrsh7th/nvim-cmp",
