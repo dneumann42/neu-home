@@ -4,36 +4,36 @@ endif
 
 set iskeyword=a-z,A-Z,-,*,_,!,@
 
-syntax keyword stardustTodos TODO XXX FIXME NOTE
+syntax keyword owlTodos TODO XXX FIXME NOTE
 
-syntax keyword stardustKeywords if def fun then else end do case cond of set while and or for when let var
-syntax keyword stardustSpecial true false = ~= echo arg
-syntax match stardustSpecialChar /[(){}\[\]]/
-syntax keyword stardustOperator + / - * % ^ @ ! =
-syntax keyword stardustType arg
+syntax keyword owlKeywords if def fun then else end do case cond of set while and or for when let var iter
+syntax keyword owlSpecial true false = ~= echo arg yield
+syntax match owlSpecialChar /[(){}\[\]]/
+syntax keyword owlOperator + / - * % ^ @ ! =
+syntax keyword owlType arg
 
-syntax match stardustInt "\<\d\+\>"
-syntax match stardustInt "\<0[xX][[:xdigit:].]\+\%([pP][-+]\=\d\+\)\=\>"
-syntax match stardustFloat "\<\d\+\.\d*\%([eE][-+]\=\d\+\)\=\>"
-syntax match stardustFloat "\.\d\+\%([eE][-+]\=\d\+\)\=\>"
-syntax match stardustFloat "\<\d\+[eE][-+]\=\d\+\>"
+syntax match owlInt "\<\d\+\>"
+syntax match owlInt "\<0[xX][[:xdigit:].]\+\%([pP][-+]\=\d\+\)\=\>"
+syntax match owlFloat "\<\d\+\.\d*\%([eE][-+]\=\d\+\)\=\>"
+syntax match owlFloat "\.\d\+\%([eE][-+]\=\d\+\)\=\>"
+syntax match owlFloat "\<\d\+[eE][-+]\=\d\+\>"
 
-syntax region stardustString start=/\v"/ skip=/\v\\./ end=/\v"/
-syntax region stardustComment start=/;/ end=/$/
-syntax keyword stardustNil nil
-syntax match stardustFnCall /\k\+\%(\s*(\)\@=/
+syntax region owlString start=/\v"/ skip=/\v\\./ end=/\v"/
+syntax region owlComment start=/;/ end=/$/
+syntax keyword owlNil nil
+syntax match owlFnCall /\k\+\%(\s*(\)\@=/
 
-highlight default link stardustTodos Todo
-highlight default link stardustNil Number
-highlight default link stardustKeywords Keyword
-highlight default link stardustFnCall Function
-highlight default link stardustFloat Number
-highlight default link stardustInt Number
-highlight default link stardustString String
-highlight default link stardustComment Comment
-highlight default link stardustOperator Operator
-highlight default link stardustType Type
-highlight default link stardustSpecial Special
-highlight default link stardustSpecialChar Label
+highlight default link owlTodos Todo
+highlight default link owlNil Number
+highlight default link owlKeywords Keyword
+highlight default link owlFnCall Function
+highlight default link owlFloat Number
+highlight default link owlInt Number
+highlight default link owlString String
+highlight default link owlComment Comment
+highlight default link owlOperator Operator
+highlight default link owlType Type
+highlight default link owlSpecial Special
+highlight default link owlSpecialChar Label
 
-let b:current_syntax = "stardust"
+let b:current_syntax = "owl"

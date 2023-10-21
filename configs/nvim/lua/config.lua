@@ -40,8 +40,8 @@ function M.setup()
   vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
   vim.cmd [[
-  au BufNewFile,BufRead *.star set filetype=stardust
-  au Syntax *.star runtime! syntax/stardust.vim
+  au BufNewFile,BufRead *.owl set filetype=owl
+  au Syntax *.owl runtime! syntax/owl.vim
   ]]
 
   return M
