@@ -23,10 +23,12 @@ client.background       #FFFFFF
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 # exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
-exec --no-startup-id nm-applet
-exec --no-startup-id picom --config /etc/nixos/configs/picom/picom.conf
 
-# exec_always --no-startup-id $HOME/.config/scripts/screenlayout
+exec --no-startup-id nm-applet
+exec --no-startup-id ~/.config/scripts/composite
+
+exec_always --no-startup-id ~/.config/scripts/screenlayout
+exec_always --no-startup-id nitrogen --restore
 # exec_always --no-startup-id feh --bg-fill $HOME/Pictures/wallpaper.png
 
 # Auto float windows with *dev*
@@ -48,21 +50,9 @@ bindsym $mod+Shift+q kill
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# start dmenu (a program launcher)
-# bindsym $mod+p exec --no-startup-id "rofi -modi drun,run -show drun"
 bindsym $mod+p exec --no-startup-id "dmenu_run"
-
-# A more modern dmenu replacement is rofi:
-# bindcode $mod+40 exec "rofi -modi drun,run -show drun"
-# There also is i3-dmenu-desktop which only displays applications shipping a
-# .desktop file. It is a wrapper around dmenu, so you need that installed.
-# bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
-
-# start a browser
 bindsym $mod+b exec --no-startup-id firefox
-
-# start file manager
-# bindsym $mod+e exec --no-startup-id nemo
+bindsym $mod+e exec --no-startup-id pcmanfm
 
 # kill focused window
 bindsym $mod+q kill
@@ -200,5 +190,5 @@ bindsym $mod+r mode "resize"
 bar {
   status_command i3blocks
   position top
-  font pango:DejaVu Sans Mono 8
+  font pango:DejaVu Sans Mono 10
 }

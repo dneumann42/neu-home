@@ -30,6 +30,7 @@ in
     unstable.neovim
     pavucontrol
     neofetch
+    pcmanfm
     dmenu
     i3status
     i3lock
@@ -50,8 +51,12 @@ in
     spotify
     newsboat
 
+    # Note taking
+    unstable.obsidian
+
     # Programming Languages
     unstable.racket
+    unstable.julia-bin
   ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
@@ -104,6 +109,7 @@ in
     '';
 
     initExtra = ''
+    export PATH=$PATH:~/.nimble/bin/
     export PATH=$PATH:~/.config/scripts/
     export PATH=$PATH:~/.local/share/pnpm/ 
     '';

@@ -1,0 +1,4 @@
+#!/bin/bash
+#!/bin/bash
+
+nixGL picom --config ~/.config/picom/picom.conf

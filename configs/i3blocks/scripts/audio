@@ -1,3 +1,8 @@
 #!/usr/bin/env zsh
 
-echo $(pamixer --get-volume) "%"
+case "$BLOCK_BUTTON" in
+  2) pavucontrol &
+esac
+
+PERCENT=$(pamixer --get-volume)
+echo "$PERCENT%"
