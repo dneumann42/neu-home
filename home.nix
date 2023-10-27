@@ -15,6 +15,8 @@ in
   nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
+
+    # System utilities
     xss-lock
     pamixer
     networkmanagerapplet
@@ -26,33 +28,37 @@ in
     (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
     killall
     arandr
-    emacs29
-    unstable.neovim
+
+    # OS
     pavucontrol
-    neofetch
     pcmanfm
     dmenu
     i3status
     i3lock
     i3blocks
-    firefox
-    discord
-
-    # Gnome
-    gnome.gnome-tweaks
-
-    gnomeExtensions.appindicator
-    gnomeExtensions.burn-my-windows
-
     kitty
     ripgrep
     yad # calendar and other popups
+    btop
+
+    # Misc
+    emacs29
+    unstable.neovim
+    neofetch
+    firefox
+    discord
     love
     spotify
     newsboat
+    zathura
 
     # Note taking
     unstable.obsidian
+
+    # Gnome
+    gnome.gnome-tweaks
+    gnomeExtensions.appindicator
+    gnomeExtensions.burn-my-windows
 
     # Programming Languages
     unstable.racket
@@ -152,6 +158,16 @@ in
 
   home.file.".config/kitty" = {
     source = ./configs/kitty;
+    recursive = true;
+  };
+
+  home.file.".config/nitrogen" = {
+    source = ./configs/nitrogen;
+    recursive = true;
+  };
+
+  home.file.".config/zathura" = {
+    source = ./configs/zathura;
     recursive = true;
   };
 
