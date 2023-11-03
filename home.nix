@@ -28,6 +28,7 @@ in
     (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
     killall
     arandr
+    ranger
 
     # OS
     pavucontrol
@@ -40,6 +41,7 @@ in
     ripgrep
     yad # calendar and other popups
     btop
+    unstable.celeste # file and folder syncing
 
     # Misc
     emacs29
@@ -51,6 +53,7 @@ in
     spotify
     newsboat
     zathura
+    unstable.musikcube
 
     # Note taking
     unstable.obsidian
@@ -60,9 +63,12 @@ in
     gnomeExtensions.appindicator
     gnomeExtensions.burn-my-windows
 
+    unstable.slack
+
     # Programming Languages
     unstable.racket
     unstable.julia-bin
+    unstable.jetbrains-toolbox
   ];
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
