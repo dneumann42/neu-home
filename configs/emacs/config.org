@@ -156,6 +156,7 @@ Dimming the parentheses Reference: DimParentheses
 
 ** Disabling backup files
 
+
 #+begin_src emacs-lisp
 (setq make-backup-files nil)
 (setq auto-save-default nil)
@@ -163,6 +164,12 @@ Dimming the parentheses Reference: DimParentheses
 #+end_src
 
 #+RESULTS:
+
+** Warning level
+
+#+begin_src emacs-lisp
+(setq warning-minimum-level :error)
+#+end_src
 
 ** Save place
 

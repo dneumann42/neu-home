@@ -26,12 +26,27 @@ function M.setup()
   map('n', '<C-j>', '<C-w>j')
   map('n', '<C-k>', '<C-w>k')
   map('n', '<C-l>', '<C-w>l')
+  
+  vim.dn = vim.dn or {}
+  vim.dn.unsplit = function()
+    -- check if nvim tree is open
+    -- if so re-open after unsplit
+    local tree_view = require("nvim-tree.view")
+    local vis = tree_view.is_visible()
+
+    vim.cmd ":only"
+
+    if vis then
+      tree_view.open { focus_tree = false }
+    end
+  end
 
   -- creating splits like a filthy emacs user
   map('n', '<C-x>2', '<C-w>S')
   map('n', '<C-x>3', '<C-w>S<C-w>L')
   map('n', '<C-x>0', '<C-w>q')
-  map('n', '<C-x>1', '<C-w><C-o>')
+
+  vim.keymap.set('n', '<C-x>1', vim.dn.unsplit)
 
   map('n', '<leader>w', ':w<cr>')
   map('n', '<leader>q', ':qa<cr>')
@@ -42,5 +57,7 @@ function M.setup()
   map('n', '<leader>tp', ':tabprevious<cr>')
   map('n', '<leader>tc', ':tabclose<cr>')
 end
+
+M.setup()
 
 return M

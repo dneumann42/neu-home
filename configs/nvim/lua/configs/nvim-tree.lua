@@ -6,7 +6,13 @@ function M.setup()
     local api = require "nvim-tree.api"
 
     local function opts(desc)
-      return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+      return {
+        desc = "nvim-tree: " .. desc,
+        buffer = bufnr,
+        noremap = true,
+        silent = true,
+        nowait = true
+      }
     end
 
     vim.keymap.set("n", "<C-]>", api.tree.change_root_to_node, opts "CD")
